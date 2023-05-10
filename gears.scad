@@ -619,7 +619,7 @@ module planetary_gear(modul, sun_teeth, planet_teeth, number_planets, width, rim
             for(n=[0:1:number_planets-1]){
                 translate(sphere_to_cartesian([center_distance,90,360/number_planets*n]))
                     rotate([0,0,n*360*d_sun/d_planet])
-                        herringbone_gear (modul, planet_teeth, width, bore, pressure_angle, helix_angle); // Planet Gears
+                        herringbone_gear (modul, planet_teeth, width, bore, pressure_angle, helix_angle, optimized); // Planet Gears
             }
        }
        else{
@@ -627,7 +627,7 @@ module planetary_gear(modul, sun_teeth, planet_teeth, number_planets, width, rim
             for(n=[0:1:number_planets-1]){
                 translate(sphere_to_cartesian([center_distance,90,360/number_planets*n]))
                 rotate([0,0,n*360*d_sun/(d_planet)])
-                    herringbone_gear (modul, planet_teeth, width, bore, pressure_angle, helix_angle); // Planet Gears
+                    herringbone_gear (modul, planet_teeth, width, bore, pressure_angle, helix_angle, optimized); // Planet Gears
             }
         }
     }
@@ -635,7 +635,7 @@ module planetary_gear(modul, sun_teeth, planet_teeth, number_planets, width, rim
         planet_distance = ring_teeth*modul/2+rim_width+d_planet;     // Distance between Planets
         for(i=[-(number_planets-1):2:(number_planets-1)]){
             translate([planet_distance, d_planet*i,0])
-                herringbone_gear (modul, planet_teeth, width, bore, pressure_angle, helix_angle); // Planet Gears
+                herringbone_gear (modul, planet_teeth, width, bore, pressure_angle, helix_angle, optimized); // Planet Gears
         }
     }
 
@@ -1082,7 +1082,7 @@ module worm_gear(modul, tooth_number, thread_starts, width, length, worm_bore, g
 
 //planetary_gear(modul=1, sun_teeth=16, planet_teeth=9, number_planets=5, width=5, rim_width=3, bore=4, pressure_angle=20, helix_angle=30, together_built=true, optimized=true);
 
-//bevel_gear(modul=1, tooth_number=30,  partial_cone_angle=45, tooth_width=5, bore=4, pressure_angle=20, helix_angle=20);
+//bevel_gear(modul=1, tooth_number=30,  partial_cone_angle=45, tooth_width=5, bore=4, pressure_angle=20, helix_angle=20, optimized=false);
 
 //bevel_herringbone_gear(modul=1, tooth_number=30, partial_cone_angle=45, tooth_width=5, bore=4, pressure_angle=20, helix_angle=30);
 
