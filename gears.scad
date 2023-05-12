@@ -40,9 +40,9 @@ Permitted modules according to DIN 780:
 
 
 // General Variables
-pi = 3.14159;
-rad = 57.29578;
-clearance = 0.05;   // clearance between teeth
+pi = PI;
+rad = 180/PI; // 57.29578;
+clearance = 0.01; //0.05;   // clearance between teeth
 
 /*  Converts Radians to Degrees */
 function grad(pressure_angle) = pressure_angle*rad;
@@ -115,7 +115,10 @@ module copier(vect, number, distance, winkel){
 module rack(modul, length, height, width, pressure_angle = 20, helix_angle = 0) {
 
     // Dimension Calculations
-    modul=modul*(1-clearance);
+	// Not sure why this line exists - we shouldn't fiddle with module if we want the
+	// rack to mate with a spur gear!
+	// See https://github.com/chrisspen/gears/issues/9
+    // modul=modul*(1-clearance);
     c = modul / 6;                                              // Tip Clearance
     mx = modul/cos(helix_angle);                          // Module Shift by Helix Angle in the X-Direction
     a = 2*mx*tan(pressure_angle)+c*tan(pressure_angle);       // Flank Width
