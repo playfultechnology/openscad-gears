@@ -1065,6 +1065,22 @@ module worm_gear(modul, tooth_number, thread_starts, width, length, worm_bore, g
     }
 }
 
+// See https://khkgears.net/new/gear_knowledge/abcs_of_gears-b/basic_gear_terminology_calculation.html
+// Returns reference diameter of spur gear
+function gear_reference_diameter(modul, teeth) = (
+  modul * teeth
+);
+// Returns tip diameter of spur gear
+function gear_tip_diameter(modul, teeth) = (
+  let(d = modul * teeth )
+  d + 2 * modul
+);
+// Returns root diameter of spur gear
+function gear_root_diameter(modul, teeth) = (
+  let(d = modul * teeth )
+  d - 2.5 * modul
+);
+
 //rack(modul=1, length=60, height=5, width=20, pressure_angle=20, helix_angle=0);
 
 //mountable_rack(modul=1, length=60, height=5, width=20, pressure_angle=20, helix_angle=0, profile=3, head="PH",fastners=3);
