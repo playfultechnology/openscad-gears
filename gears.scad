@@ -326,6 +326,84 @@ module spur_gear(modul, tooth_number, width, bore, pressure_angle = 20, helix_an
     }
 }
 
+
+/*  Spur gear
+    modul = Height of the Tooth Tip beyond the Pitch Circle
+    tooth_number = Number of Gear Teeth
+    width = tooth_width
+    bore = Diameter of the Center Hole
+    pressure_angle = Pressure Angle, Standard = 20° according to DIN 867. Should not exceed 45°.
+    helix_angle = Helix Angle to the Axis of Rotation; 0° = Spur Teeth
+    optimized = Create holes for Material-/Weight-Saving or Surface Enhancements where Geometry allows */
+module spur_gear_2D(modul, tooth_number, bore, pressure_angle = 20, helix_angle = 0, optimized = true) {
+
+    // Dimension Calculations
+    d = modul * tooth_number;                                           // Pitch Circle Diameter
+    r = d / 2;                                                      // Pitch Circle Radius
+    alpha_spur = atan(tan(pressure_angle)/cos(helix_angle));// Helix Angle in Transverse Section
+    db = d * cos(alpha_spur);                                      // Base Circle Diameter
+    rb = db / 2;                                                    // Base Circle Radius
+    da = (modul <1)? d + modul * 2.2 : d + modul * 2;               // Tip Diameter according to DIN 58400 or DIN 867
+    ra = da / 2;                                                    // Tip Circle Radius
+    c =  (tooth_number <3)? 0 : modul/6;                                // Tip Clearance
+    df = d - 2 * (modul + c);                                       // Root Circle Diameter
+    rf = df / 2;                                                    // Root Radius
+    rho_ra = acos(rb/ra);                                           // Maximum Rolling Angle;
+                                                                    // Involute begins on the Base Circle and ends at the Tip Circle
+    rho_r = acos(rb/r);                                             // Rolling Angle at Pitch Circle;
+                                                                    // Involute begins on the Base Circle and ends at the Tip Circle
+    phi_r = grad(tan(rho_r)-radian(rho_r));                         // Angle to Point of Involute on Pitch Circle
+    step = rho_ra/16;                                            // Involute is divided into 16 pieces
+    tau = 360/tooth_number;                                             // Pitch Angle
+
+    r_hole = (2*rf - bore)/8;                                    // Radius of Holes for Material-/Weight-Saving
+    rm = bore/2+2*r_hole;                                        // Distance of the Axes of the Holes from the Main Axis
+  clearance = 0.01; //0.05;   // clearance between teeth
+
+    // Drawing
+    union(){
+        rotate([0,0,-phi_r-90*(1-clearance)/tooth_number]){                     // Center Tooth on X-Axis;
+                difference(){
+                    union(){
+                        tooth_width = (180*(1-clearance))/tooth_number+2*phi_r;
+                        circle(rf);                                     // Root Circle
+                        for (rot = [0:tau:360]){
+                            rotate (rot){                               // Copy and Rotate "Number of Teeth"
+                                polygon(concat(                         // Tooth
+                                    [[0,0]],                            // Tooth Segment starts and ends at Origin
+                                    [for (rho = [0:step:rho_ra])     // From zero Degrees (Base Circle)
+                                                                        // To Maximum Involute Angle (Tip Circle)
+                                        polar_to_cartesian(ev(rb,rho))],       // First Involute Flank
+
+                                    [polar_to_cartesian(ev(rb,rho_ra))],       // Point of Involute on Tip Circle
+
+                                    [for (rho = [rho_ra:-step:0])    // of Maximum Involute Angle (Tip Circle)
+                                                                        // to zero Degrees (Base Circle)
+                                        polar_to_cartesian([ev(rb,rho)[0], tooth_width-ev(rb,rho)[1]])]
+                                                                        // Second Involute Flank
+                                                                        // (180*(1-clearance)) instead of 180 Degrees,
+                                                                        // to allow clearance of the Flanks
+                                    )
+                                );
+                            }
+                        }
+                        }
+                    circle(r = rm+r_hole*1.49);                         // "bore"
+            }
+        }
+
+                difference(){
+                    circle(r = rm+r_hole*1.51);
+                    circle(r = bore/2);
+                }
+    }
+}
+
+
+
+
+
+
 /* Herringbone_rack; uses the module "rack"
     modul = Height of the Tooth Tip above the Rolling LIne
     length = Length of the Rack
